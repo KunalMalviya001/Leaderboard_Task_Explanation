@@ -41,6 +41,14 @@ const podiumConfig = [
 ];
 
 function Leaderboard({ data = [] }) {
+  if (!Array.isArray(data)) {
+    return (
+      <p className="text-center text-red-600 mt-8 select-none">
+        Error: Leaderboard data is not an array (got {typeof data})
+      </p>
+    );
+  }
+
   const topThree = data.slice(0, 3);
   const rest = data.slice(3);
 
@@ -52,73 +60,73 @@ function Leaderboard({ data = [] }) {
 
       {/* Olympic Podium */}
       <div
-  className="relative flex justify-center items-end mb-16"
-  style={{ height: 260 }}
->
-  {[1, 0, 2].map((pos) => {
-    const user = topThree[pos];
-    const config = podiumConfig[pos];
-    if (!user || !config) return null;
-
-    return (
-      <div
-        key={user.name}
-        role="button"
-        aria-label={`${user.name} is ranked #${config.rank} with ${
-          user.totalPoints ?? 0
-        } points`}
-        tabIndex={0}
-        className={`
-          flex flex-col items-center rounded-t-lg cursor-pointer
-          transition-transform duration-300 ease-in-out transform
-          hover:scale-110 hover:-translate-y-4
-          ${config.gradient} ${config.shadow} shadow-lg select-none relative
-        `}
-        style={{
-          width: config.width,
-          height: config.height,
-          zIndex: config.zIndex,
-          transform: `translateX(${config.translateX}px)`,
-        }}
-        title={`${user.name} — ${user.totalPoints ?? 0} points`}
+        className="relative flex justify-center items-end mb-16"
+        style={{ height: 260 }}
       >
-        {/* Medal with shine animation */}
-        <div
-          className={`
-            absolute -top-14 rounded-full flex items-center justify-center
-            w-20 h-20 text-white text-5xl font-extrabold
-            shadow-xl
-            ${config.medalColor} ${config.medalHover}
-            relative overflow-hidden
-            animate-bounce-slow hover:animate-bounce-fast
-          `}
-          style={{ left: "50%", transform: "translateX(-50%)" }}
-        >
-          <FaMedal className="relative z-10" />
-          {/* Shiny highlight */}
-          <div
-            className="absolute top-0 left-0 w-full h-full bg-white opacity-20
-              rounded-full pointer-events-none animate-shine"
-          />
-        </div>
+        {[1, 0, 2].map((pos) => {
+          const user = topThree[pos];
+          const config = podiumConfig[pos];
+          if (!user || !config) return null;
 
-        {/* User info */}
-        <div className="mt-auto py-3 px-4 text-center">
-          <p
-            className="font-extrabold text-2xl text-white drop-shadow-md truncate"
-            title={user.name}
-          >
-            {user.name || "—"}
-          </p>
-          <p className="text-yellow-100 text-sm font-semibold mt-1">
-            {user.totalPoints ?? 0} pts
-          </p>
-          <p className="text-yellow-200 text-xs mt-1">{medalLabels[pos]}</p>
-        </div>
+          return (
+            <div
+              key={user._id || user.name || pos} // safer key fallback
+              role="button"
+              aria-label={`${user.name} is ranked #${config.rank} with ${
+                user.totalPoints ?? 0
+              } points`}
+              tabIndex={0}
+              className={`
+                flex flex-col items-center rounded-t-lg cursor-pointer
+                transition-transform duration-300 ease-in-out transform
+                hover:scale-110 hover:-translate-y-4
+                ${config.gradient} ${config.shadow} shadow-lg select-none relative
+              `}
+              style={{
+                width: config.width,
+                height: config.height,
+                zIndex: config.zIndex,
+                transform: `translateX(${config.translateX}px)`,
+              }}
+              title={`${user.name} — ${user.totalPoints ?? 0} points`}
+            >
+              {/* Medal with shine animation */}
+              <div
+                className={`
+                  absolute -top-14 rounded-full flex items-center justify-center
+                  w-20 h-20 text-white text-5xl font-extrabold
+                  shadow-xl
+                  ${config.medalColor} ${config.medalHover}
+                  relative overflow-hidden
+                  animate-bounce-slow hover:animate-bounce-fast
+                `}
+                style={{ left: "50%", transform: "translateX(-50%)" }}
+              >
+                <FaMedal className="relative z-10" />
+                {/* Shiny highlight */}
+                <div
+                  className="absolute top-0 left-0 w-full h-full bg-white opacity-20
+                    rounded-full pointer-events-none animate-shine"
+                />
+              </div>
+
+              {/* User info */}
+              <div className="mt-auto py-3 px-4 text-center">
+                <p
+                  className="font-extrabold text-2xl text-white drop-shadow-md truncate"
+                  title={user.name}
+                >
+                  {user.name || "—"}
+                </p>
+                <p className="text-yellow-100 text-sm font-semibold mt-1">
+                  {user.totalPoints ?? 0} pts
+                </p>
+                <p className="text-yellow-200 text-xs mt-1">{medalLabels[pos]}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
-    );
-  })}
-</div>
 
       {/* Remaining Users Table */}
       {rest.length > 0 && (
@@ -140,11 +148,13 @@ function Leaderboard({ data = [] }) {
             <tbody>
               {rest.map((entry, idx) => (
                 <tr
-                  key={entry.name}
+                  key={entry._id || entry.name || idx + 4} // safer key fallback
                   className="hover:bg-blue-50 cursor-pointer transition-all duration-300 ease-in-out"
-                  title={`${entry.name} — ${entry.totalPoints} points`}
+                  title={`${entry.name} — ${entry.totalPoints}`}
                 >
-                  <td className="border border-gray-300 px-5 py-3">{entry.rank ?? idx + 4}</td>
+                  <td className="border border-gray-300 px-5 py-3">
+                    {entry.rank ?? idx + 4}
+                  </td>
                   <td className="border border-gray-300 px-5 py-3">{entry.name}</td>
                   <td className="border border-gray-300 px-5 py-3">{entry.totalPoints}</td>
                 </tr>
