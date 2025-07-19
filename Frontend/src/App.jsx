@@ -5,7 +5,7 @@ import Leaderboard from './components/Leaderboard';
 import ClaimButton from './components/ClaimButton';
 
 // Base URL for backend API
-const API_BASE = 'https://leaderboardtaskdemo.netlify.app';
+const API_BASE = 'https://leaderboard-backend-5xvj.onrender.com';
 
 function App() {
   const [users, setUsers] = useState([]);
