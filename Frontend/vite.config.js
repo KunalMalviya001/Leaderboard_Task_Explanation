@@ -15,7 +15,7 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: "http://localhost:5000", // Adjust this to your backend URL
+        target: "https://leaderboard-backend-5xvj.onrender.com", // Adjust this to your backend URL
         changeOrigin: true,
         secure: false,
       },
